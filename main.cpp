@@ -4,8 +4,34 @@
 #include <vector>
 #include <functional>
 #include <fstream>
-#include <iostream>
+#include "rlgl.h"
 #include <sstream>
+
+
+void DrawGridColor(int slices, float spacing)
+{
+	int halfSlices = slices / 2;
+
+	rlBegin(RL_LINES);
+	for (int i = -halfSlices; i <= halfSlices; i++)
+	{
+		if (i == 0)
+		{
+			rlColor3f(1.0f, 1.0f, 0.5f);
+		}
+		else
+		{
+			rlColor4f(0.75f, 0.75f, 0.75f, 0.3f);
+		}
+
+		rlVertex3f((float)i * spacing, 0.0f, (float)-halfSlices * spacing);
+		rlVertex3f((float)i * spacing, 0.0f, (float)halfSlices * spacing);
+
+		rlVertex3f((float)-halfSlices * spacing, 0.0f, (float)i * spacing);
+		rlVertex3f((float)halfSlices * spacing, 0.0f, (float)i * spacing);
+	}
+	rlEnd();
+}
 
 int main() {
 
@@ -28,7 +54,7 @@ int main() {
 
 	Camera3D camera = { 0 };
 
-	camera.position = { 2.0f, 5.0f, 10.0f };  
+	camera.position = { 2.0f, 5.0f, 25.0f };  
 	camera.target = { 2.0f, 0.0f, 0.0f };      
 	camera.up = { 0.0f, 1.0f, 0.0f };          
 	camera.fovy = 45.0f;                                
@@ -75,6 +101,10 @@ int main() {
 			if (IsKeyDown(KEY_LEFT_CONTROL) && IsKeyPressed(KEY_T))
 					activateMenu = !activateMenu;
 
+
+			BeginMode3D(camera);
+				DrawGridColor(90.0f, 1.0f);
+			EndMode3D();
 
 			Rectangle const rec{ 25, 15, 35, (screenHeight - 230) };
 			DrawRectangleRounded(rec, 0.2f, 1, Color{16, 23, 23, 200});
@@ -158,11 +188,6 @@ int main() {
 				fs.clear();
 			}
 		
-		
-
-			BeginMode3D(camera);
-
-			EndMode3D();
 
 		EndDrawing();
 	}
